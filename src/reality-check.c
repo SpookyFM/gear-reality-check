@@ -244,6 +244,9 @@ int update_alarms(app_control_h app_control)
 
 		schedule_alarms(app_control, target_num_alarms_tomorrow, generated_times);
 		free(generated_times);
+	} else
+	{
+		dlog_print(DLOG_INFO, LOG_TAG, "Correct number of alarms scheduled for tomorrow (%d).", num_alarms_tomorrow);
 	}
 
 	return TIZEN_ERROR_NONE;
