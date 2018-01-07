@@ -238,26 +238,9 @@ static void app_control(app_control_h app_control, void *user_data)
 			return;
 		}
 
-		/*
-		 * Remove bundle that has alarm id as bundle's key.
-		 */
-		data_delete_bundle(alarm_id);
+		// We don't have extra data, just show the alarm window
+		//@@TODO: Remove the code that creates it
 
-		/*
-		 * Find genlist's item that is consistent with alarm id.
-		 */
-		genlist = view_get_genlist();
-		item = view_alarm_find_item_from_genlist(genlist, atoi(alarm_id));
-		if (item == NULL) {
-			dlog_print(DLOG_ERROR, LOG_TAG, "genlist's item is NULL.");
-			return;
-		}
-
-		gendata = elm_object_item_data_get(item);
-		if (gendata == NULL) {
-			dlog_print(DLOG_ERROR, LOG_TAG, "Failed at elm_object_item_data_get(). Gendata is NULL.");
-			return;
-		}
 
 		/*
 		 * Create a layout when the alarm sounds.
