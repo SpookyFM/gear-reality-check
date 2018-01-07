@@ -1,0 +1,257 @@
+/*
+ * Copyright (c) 2016 Samsung Electronics Co., Ltd
+ *
+ * Licensed under the Flora License, Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://floralicense.org/license/
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+images {
+   image: "alarm_no_alarm_icon.png" COMP;
+   image: "alarm_ringing_icon.png" COMP;
+}
+
+collections {
+   group { name: "base_alarm";
+      parts {
+         part { name: "base";
+            type: SPACER;
+            description { state: "default" 0.0;
+               rel1.relative: 0.0 0.0;
+               rel2.relative: 1.0 1.0;
+            }
+         }
+         part { name: "no_alarm.title";
+            type: TEXT;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.relative: 0.5 0.5;
+               rel1.offset: 0 -110;
+               rel1.to: "base";
+               rel2.relative: 0.5 0.5;
+               rel2.offset: 0 -110;
+               rel2.to: "base";
+               fixed: 1 1;
+               min: 283 47;
+               color: 54 138 255 255;
+               text {
+                  font: TIZEN_SANS":style=Bold";
+                  text: "Alarm";
+                  text_class: "tizen";
+                  min: 0 1;
+                  size: 25;
+                  align: 0.5 0.5;
+               }
+            }
+            description { state: "genlist_show" 0.0;
+               inherit: "default";
+               visible: 0;
+            }
+         }
+         part { name: "swallow.no_alarm.button";
+            type: SWALLOW;
+            mouse_events: 1;
+            description { state: "default" 0.0;
+               rel1.relative: 0.5 0.5;
+               rel1.to: "base";
+               rel2.relative: 0.5 0.5;
+               rel2.to: "base";
+               min: 98 98;
+               max: 98 98;
+               fixed: 1 1;
+            }
+         }
+         part { name: "no_alarm.img";
+            type: IMAGE;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "swallow.no_alarm.button";
+               rel2.to: "swallow.no_alarm.button";
+               image.normal: "alarm_no_alarm_icon.png";
+               min: 98 98;
+               max: 98 98;
+               fixed: 1 1;
+               visible: 1;
+            }
+            description { state: "dim" 0.0;
+               inherit: "default";
+               color: 255 255 255 100;
+            }
+            description { state: "genlist_show" 0.0;
+               inherit: "default";
+               visible: 0;
+            }
+         }
+         part { name: "no_alarm.text";
+            type: TEXT;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.relative: 0.5 0.5;
+               rel1.offset: 0 110;
+               rel1.to: "base";
+               rel2.relative: 0.5 0.5;
+               rel2.offset: 0 110;
+               rel2.to: "base";
+               color: 255 255 255 255;
+               fixed: 1 1;
+               min: 283 47;
+               text {
+                  font: TIZEN_SANS":style=Regular";
+                  text: "Add alarm";
+                  text_class: "tizen";
+                  min: 0 1;
+                  size: 22;
+                  align: 0.5 0.5;
+               }
+            }
+            description { state: "dim" 0.0;
+               inherit: "default";
+               color: 255 255 255 100;
+            }
+            description { state: "genlist_show" 0.0;
+               inherit: "default";
+               visible: 0;
+            }
+         }
+         part { name: "swallow.genlist";
+            type: SWALLOW;
+            mouse_events: 1;
+            description { state: "default" 0.0;
+               rel1.relative: 0.0 0.0;
+               rel1.to: "base";
+               rel2.relative: 1.0 1.0;
+               rel2.to: "base";
+               fixed: 1 1;
+               visible: 0;
+            }
+            description { state: "genlist_show" 0.0;
+               inherit: "default";
+               visible: 1;
+            }
+         }
+         part { name: "swallow.genlist.button";
+            type: SWALLOW;
+            mouse_events: 1;
+            description { state: "default" 0.0;
+               rel1.relative: 0.5 1.0;
+               rel1.to: "base";
+               rel1.offset: 0 -30;
+               rel2.relative: 0.5 1.0;
+               rel2.to: "base";
+               rel2.offset: 0 -30;
+               fixed: 1 1;
+               visible: 0;
+            }
+            description { state: "genlist_show" 0.0;
+               inherit: "default";
+               visible: 1;
+            }
+         }
+      } // parts
+      programs {
+         program {
+            signal: "mouse.down";
+            source: "button";
+            action: STATE_SET "dim" 0.0;
+            target: "no_alarm.img";
+            target: "no_alarm.text";
+         }
+         program {
+            signal: "mouse.up";
+            source: "button";
+            action: STATE_SET "default" 0.0;
+            target: "no_alarm.img";
+            target: "no_alarm.text";
+         }
+         program {
+            signal: "genlist.show";
+            source: "alarm";
+            action: STATE_SET "genlist_show" 0.0;
+            target: "swallow.genlist";
+            target: "swallow.genlist.button";
+            target: "no_alarm.title";
+            target: "swallow.no_alarm.button";
+            target: "no_alarm.img";
+            target: "no_alarm.text";
+         }
+         program {
+            signal: "genlist.hide";
+            source: "alarm";
+            action: STATE_SET "default" 0.0;
+            target: "swallow.genlist";
+            target: "swallow.genlist.button";
+            target: "no_alarm.title";
+            target: "swallow.no_alarm.button";
+            target: "no_alarm.img";
+            target: "no_alarm.text";
+         }
+      } // programs
+   } // group "no_alarm"
+   group { name: "ringing_alarm";
+      parts {
+         part { name: "base";
+            type: SPACER;
+            description { state: "default" 0.0;
+               rel1.relative: 0.0 0.0;
+               rel2.relative: 1.0 1.0;
+            }
+         }
+         part { name: "ringing_alarm.img";
+            type: IMAGE;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.relative: 0.5 0.3;
+               rel1.to: "base";
+               rel2.relative: 0.5 0.3;
+               rel2.to: "base";
+               image.normal: "alarm_ringing_icon.png";
+               min: 94 94;
+               max: 94 94;
+               fixed: 1 1;
+            }
+         }
+         part { name: "ringing_alarm.text";
+            type: TEXT;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.relative: 0.5 0.5;
+               rel1.to: "base";
+               rel2.relative: 0.5 0.5;
+               rel2.to: "base";
+               color: 255 255 255 255;
+               fixed: 1 1;
+               min: 283 47;
+               text {
+                  font: TIZEN_SANS":style=Regular";
+                  text: "Ring ring ...";
+                  text_class: "tizen";
+                  min: 0 1;
+                  size: 24;
+                  align: 0.5 0.5;
+               }
+            }
+         }
+         part { name: "swallow.button";
+            type: SWALLOW;
+            mouse_events: 1;
+            description { state: "default" 0.0;
+               rel1.relative: 0.5 1.0;
+               rel1.to: "base";
+               rel1.offset: 0 -30;
+               rel2.relative: 0.5 1.0;
+               rel2.to: "base";
+               rel2.offset: 0 -30;
+               fixed: 1 1;
+            }
+         }
+      } // parts
+   } // group "ringing_alarm"
+} // collections
