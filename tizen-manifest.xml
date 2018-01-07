@@ -7,6 +7,7 @@
         <icon>gear-reality-check.png</icon>
     </ui-application>
     <privileges>
+        <privilege>http://tizen.org/privilege/haptic</privilege>
         <privilege>http://tizen.org/privilege/alarm.set</privilege>
         <privilege>http://tizen.org/privilege/widget.viewer</privilege>
     </privileges>
