@@ -10,7 +10,9 @@
 #include <stdlib.h>
 #include <app_alarm.h>
 #include <haptic.h>
+#include <dlog.h>
 
+#include "gear-reality-check.h"
 #include "reality-check.h"
 
 
@@ -103,23 +105,81 @@ static int generate_times(struct tm date, int num_times, struct tm** result)
 }
 
 /** Schedule alarms on the given dates */
-static int schedule_alarms(int num_alarms, struct tm* alarms)
+static int schedule_alarms(app_control_h app_control, int num_alarms, struct tm* alarms)
 {
-	// TODO: Check out how to schedule alarms
+	struct tm* current = alarms;
+	int ret;
+	for (int i = 0; i < num_alarms; i++)
+	{
+		int alarm_id;
+		ret = alarm_schedule_at_date(app_control, current, 0, &alarm_id);
+		if (ret != ALARM_ERROR_NONE)
+		        dlog_print(DLOG_ERROR, LOG_TAG, "Get time Error: %d ", ret);
+		dlog_print(DLOG_INFO, LOG_TAG, "New alarm scheduled at: %s ", asctime(current));
+		current++;
+	}
+
+	// @@TODO: Better error handling
 	return TIZEN_ERROR_NONE;
 }
+
+/** Save all registered alarms into an array of tm values. */
+static bool on_foreach_registered_alarm(int alarm_id, void *user_data)
+{
+    int ret = 0;
+    struct tm date;
+
+    ret = alarm_get_scheduled_date(alarm_id, &date);
+    if (ret != ALARM_ERROR_NONE)
+        dlog_print(DLOG_ERROR, LOG_TAG, "Get time Error: %d ", ret);
+
+    struct tm** array = (struct tm**)(user_data);
+    // Write the current date into the array
+    **array = date;
+    // And point to the next element
+    *array += 1;
+
+    return true;
+}
+
+/** Function to count the number of registered alarms. user_data is an int*, must be set to 0 before */
+static bool on_foreach_registered_alarm_count(int alarm_id, void *user_data)
+{
+	int* count = (int*) user_data;
+	*count += 1;
+
+    return true;
+}
+
 
 /** Get all times at which the app already has alarms set */
 static int get_all_alarms(int* num_alarms, struct tm** result)
 {
+	// First, count the numbers of alarms by iterating once over them
+	*num_alarms = 0;
+	int ret = 0;
+	ret = alarm_foreach_registered_alarm(on_foreach_registered_alarm_count, (void*) num_alarms);
+	if (ret != ALARM_ERROR_NONE)
+	    dlog_print(DLOG_ERROR, LOG_TAG, "Listing Error: %d ", ret);
+
+	// Allocate an array large enough
+	*result = malloc(sizeof(struct tm) * *num_alarms);
+
+	struct tm* first_element = *result;
+	struct tm** array_copy = &first_element;
+
+	// And fill the array
+	ret = alarm_foreach_registered_alarm(on_foreach_registered_alarm, (void*) array_copy);
+	if (ret != ALARM_ERROR_NONE)
+	    dlog_print(DLOG_ERROR, LOG_TAG, "Listing Error: %d ", ret);
+
 	return TIZEN_ERROR_NONE;
 }
 
 /** Checks whether the two dates are the same day
  *
  */
-// @@TODO: Is there a define for bools?
-static int is_same_day(struct tm date, struct tm reference_date)
+static bool is_same_day(struct tm date, struct tm reference_date)
 {
 	return date.tm_yday == reference_date.tm_yday &&
 			date.tm_mon == reference_date.tm_mon &&
@@ -145,10 +205,31 @@ static int get_num_alarms_date(struct tm date, int* result)
 	return TIZEN_ERROR_NONE;
 }
 
-/** Function for updating all alarms. Will check if the alarms for tomorrow are not set up correctly and, if so, set them up */
-static int update_alarms()
+/** Gets tomorrow's date */
+static int get_tomorrow(struct tm* result)
 {
-	struct tm tomorrow; // @@TODO: Initialize correctly
+	int ret;
+	ret = alarm_get_current_time(result);
+
+	// Convert to Unix timestamp
+	time_t result_t = mktime(result);
+
+	// Add one day's equivalent in seconds
+	result_t += 24 * 60 * 60;
+
+	// And convert back
+	localtime_r(&result_t, result);
+
+	return TIZEN_ERROR_NONE;
+}
+
+/** Function for updating all alarms. Will check if the alarms for tomorrow are not set up correctly and, if so, set them up */
+int update_alarms(app_control_h app_control)
+{
+	dlog_print(DLOG_INFO, LOG_TAG, "Updating alarms.");
+	struct tm tomorrow;
+	int ret = get_tomorrow(&tomorrow);
+
 	// Check out if we have enough alarms scheduled for tomorrow
 	int num_alarms_tomorrow = 0;
 	get_num_alarms_date(tomorrow, &num_alarms_tomorrow);
@@ -156,11 +237,12 @@ static int update_alarms()
 	get_target_num_reminders(&target_num_alarms_tomorrow);
 	if (num_alarms_tomorrow != target_num_alarms_tomorrow)
 	{
+		dlog_print(DLOG_INFO, LOG_TAG, "Wrong number of alarms scheduled for tomorrow, %d instead of %d.", num_alarms_tomorrow, target_num_alarms_tomorrow);
 		// We need to schedule alarms for tomorrow
 		struct tm* generated_times;
 		generate_times(tomorrow, target_num_alarms_tomorrow, &generated_times);
 
-		schedule_alarms(target_num_alarms_tomorrow, generated_times);
+		schedule_alarms(app_control, target_num_alarms_tomorrow, generated_times);
 		free(generated_times);
 	}
 
@@ -204,7 +286,7 @@ static void alarm_vibrate()
 
 void test()
 {
-	struct tm today;
+	/* struct tm today;
 	alarm_get_current_time(&today);
 	int num_times = 0;
 	get_target_num_reminders(&num_times);
@@ -219,7 +301,7 @@ void test()
 		current++;
 	}
 
-	free(result);
+	free(result); */
 }
 
 

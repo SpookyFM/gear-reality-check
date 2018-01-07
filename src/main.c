@@ -27,6 +27,7 @@
 #include "gear-reality-check.h"
 #include "data.h"
 #include "view.h"
+#include "reality-check.h"
 
 #define INSTANCE_ID_FOR_APP_CONTROL "widget_instance_id_for_app_control"
 
@@ -215,6 +216,12 @@ static void app_control(app_control_h app_control, void *user_data)
 	int ret = 0;
 
 	dlog_print(DLOG_INFO, LOG_TAG, "App control");
+
+
+	app_control_h app_control_2 = data_get_app_control();
+
+	// Try to update tomorrow's alarms
+	update_alarms(app_control_2);
 
 	/*
 	 * When it comes time to sound alarm that has set alarm_schedule_at_date(),

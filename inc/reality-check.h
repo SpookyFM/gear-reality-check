@@ -10,5 +10,7 @@
 
 void test();
 
+int update_alarms(app_control_h app_control);
+
 
 #endif /* REALITY_CHECK_H_ */
