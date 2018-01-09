@@ -20,6 +20,32 @@ images {
 }
 
 collections {
+   base_scale: 1.0;
+   
+   styles {
+      style { name: "basic_style";
+         base: "font="Sans" font_size=20 text_class=entry color=#FFFFFF style=soft_outline outline_color=#0088AA64 valign=0.5 ellipsis=1.0 wrap=none align=center";
+      }
+      style { name: "wrap_none_style";
+         base: "font="Sans" font_size=15 text_class=entry color=#FFFFFF style=outline outline_color=#FF0000 valign=0.5 wrap=none align=center";
+      }
+      style { name: "wrap_char_style";
+         base: "font="Sans" font_size=15 text_class=entry color=#FFFFFF style=outline outline_color=#FF5E00 valign=0.5 wrap=char align=center";
+      }
+      style { name: "wrap_word_style";
+         base: "font="Sans" font_size=15 text_class=entry color=#FFFFFF style=outline outline_color=#FFBB00 valign=0.5 wrap=word align=center";
+      }
+      style { name: "wrap_mixed_style";
+         base: "font="Sans" font_size=15 text_class=entry color=#FFFFFF style=outline outline_color=#1DDB16 valign=0.5 wrap=mixed align=center";
+      }
+      style { name: "ellipsis_1_style";
+         base: "font="Sans" font_size=15 text_class=entry color=#FFFFFF style=soft_outline outline_color=#0054FF valign=0.5 ellipsis=1.0 wrap=none align=center";
+      }
+      style { name: "ellipsis_0_style";
+         base: "font="Sans" font_size=15 text_class=entry color=#FFFFFF style=soft_outline outline_color=#5F00FF valign=0.5 ellipsis=0.0 wrap=none align=center";
+      }
+   }
+   
    group { name: "base_alarm";
       parts {
          part { name: "base";
@@ -219,7 +245,7 @@ collections {
             }
          }
          part { name: "ringing_alarm.text";
-            type: TEXT;
+            type: TEXTBLOCK;
             scale: 1;
             description { state: "default" 0.0;
                rel1.relative: 0.5 0.5;
@@ -231,8 +257,9 @@ collections {
                min: 283 47;
                text {
                   font: TIZEN_SANS":style=Regular";
-                  text: "Ring ring ...";
+                  text: "Are you<br>dreaming?";
                   text_class: "tizen";
+                  style: "basic_style";
                   min: 0 1;
                   size: 24;
                   align: 0.5 0.5;

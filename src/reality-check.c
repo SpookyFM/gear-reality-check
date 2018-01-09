@@ -255,7 +255,7 @@ int update_alarms(app_control_h app_control)
 /*
  * @brief Activates the vibration during an alarm
  */
-static void alarm_vibrate()
+void alarm_vibrate()
 {
 	// Check how many vibrators we have
 	int device_haptic_count = 0;

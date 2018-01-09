@@ -30,5 +30,6 @@
 
 void alarm_destroy_widget(void *user_data);
 void alarm_set_widget_on_off(char *on_off, void *user_data);
+void alarm_vibrate();
 
 #endif

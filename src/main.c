@@ -241,6 +241,8 @@ static void app_control(app_control_h app_control, void *user_data)
 		// We don't have extra data, just show the alarm window
 		//@@TODO: Remove the code that creates it
 
+		// Vibrate to get user's attention
+		alarm_vibrate();
 
 		/*
 		 * Create a layout when the alarm sounds.
