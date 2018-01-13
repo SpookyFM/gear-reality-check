@@ -10,6 +10,7 @@
         <privilege>http://tizen.org/privilege/alarm.get</privilege>
         <privilege>http://tizen.org/privilege/haptic</privilege>
         <privilege>http://tizen.org/privilege/alarm.set</privilege>
+        <privilege>http://tizen.org/privilege/display</privilege>
         <privilege>http://tizen.org/privilege/widget.viewer</privilege>
     </privileges>
 </manifest>

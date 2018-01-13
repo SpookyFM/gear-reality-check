@@ -9,11 +9,19 @@
 #include <time.h>
 #include <stdlib.h>
 #include <app_alarm.h>
+#include <app_preference.h>
 #include <haptic.h>
 #include <dlog.h>
 
 #include "gear-reality-check.h"
 #include "reality-check.h"
+
+const char* num_reminders_key = "num_reminders";
+const char* start_time_hours_key = "start_time_hours";
+const char* start_time_mins_key = "start_time_mins";
+const char* end_time_hours_key = "end_time_hours";
+const char* end_time_mins_key = "end_time_mins";
+const char* last_handled_date_key = "last_handled_date";
 
 
 // Plan:
@@ -33,13 +41,22 @@
 /** The number of reminders to show per day */
 static int get_target_num_reminders(int* num_reminders)
 {
-	*num_reminders = 5;
+	bool exists = false;
+	if (preference_is_existing(num_reminders_key, &exists) == PREFERENCE_ERROR_NONE && exists)
+	{
+		preference_get_int(num_reminders_key, num_reminders);
+		dlog_print(DLOG_INFO, LOG_TAG, "Preferred number of reminders: %d ", *num_reminders);
+	} else
+	{
+		*num_reminders = 5;
+	}
 	return TIZEN_ERROR_NONE;
 }
 
 /** The time of day before which no reality checks should be triggered. Only hours and minutes will be used. */
 static int get_start_time(struct tm* result)
 {
+	//@@TODO: Refactor to use preferences
 	result->tm_hour = 8;
 	result->tm_min = 0;
 	return TIZEN_ERROR_NONE;
@@ -48,6 +65,7 @@ static int get_start_time(struct tm* result)
 /** The time of day after which no reality checks should be triggered. Only hours and minutes will be used. */
 static int get_stop_time(struct tm* result)
 {
+	//@@TODO: Refactor to use preferences
 	result->tm_hour = 22;
 	result->tm_min = 0;
 
@@ -249,6 +267,40 @@ int update_alarms(app_control_h app_control)
 		dlog_print(DLOG_INFO, LOG_TAG, "Correct number of alarms scheduled for tomorrow (%d).", num_alarms_tomorrow);
 	}
 
+	// For debug purposes, also schedule today
+	struct tm today;
+	ret = alarm_get_current_time(&today);
+
+	// Check out if we have enough alarms scheduled for today
+	int num_alarms_today;
+	get_num_alarms_date(today, &num_alarms_today);
+	int target_num_alarms_today = 0;
+	get_target_num_reminders(&target_num_alarms_today);
+	if (num_alarms_tomorrow != target_num_alarms_today)
+	{
+		dlog_print(DLOG_INFO, LOG_TAG, "Wrong number of alarms scheduled for today, %d instead of %d.", num_alarms_today, target_num_alarms_today);
+		// We need to schedule alarms for today
+		struct tm* generated_times;
+		generate_times(today, target_num_alarms_today, &generated_times);
+
+		schedule_alarms(app_control, target_num_alarms_today, generated_times);
+		free(generated_times);
+	} else
+	{
+		dlog_print(DLOG_INFO, LOG_TAG, "Correct number of alarms scheduled for today (%d).", num_alarms_today);
+	}
+
+
+
+	// For testing purposes, schedule one in a few seconds
+	/* int alarm_id;
+	struct tm soon;
+	ret = alarm_get_current_time(&soon);
+	soon.tm_sec += 20;
+	ret = alarm_schedule_at_date(app_control, &soon, 0, &alarm_id); */
+
+
+
 	return TIZEN_ERROR_NONE;
 }
 
@@ -264,6 +316,7 @@ void alarm_vibrate()
 
 	if (ret != DEVICE_ERROR_NONE || device_haptic_count == 0)
 	{
+		dlog_print(DLOG_INFO, LOG_TAG, "Error or no haptic devices found.");
 		// Nothing to do in case of error or no haptic devices present
 		return;
 	}
@@ -274,6 +327,7 @@ void alarm_vibrate()
 	ret = device_haptic_open(0, &device_handle);
 	if (ret != DEVICE_ERROR_NONE)
 	{
+		dlog_print(DLOG_INFO, LOG_TAG, "Error opening haptic device.");
 		return;
 	}
 
@@ -281,6 +335,18 @@ void alarm_vibrate()
 
 	// Start vibrating
 	ret = device_haptic_vibrate(device_handle, 500, 100, effect_handle);
+	if (ret != DEVICE_ERROR_NONE)
+	{
+		dlog_print(DLOG_INFO, LOG_TAG, "Error starting vibration.");
+		return;
+	}
+
+	/* ret = device_haptic_close(device_handle);
+	if (ret != DEVICE_ERROR_NONE)
+	{
+		dlog_print(DLOG_INFO, LOG_TAG, "Error closing haptic device.");
+		return;
+	} */
 
 	//@@TODO: Should also close the device again
 }

@@ -23,6 +23,7 @@
 #include <bundle.h>
 #include <widget_service.h>
 #include <widget_errno.h>
+#include <device/power.h>
 
 #include "gear-reality-check.h"
 #include "data.h"
@@ -241,8 +242,19 @@ static void app_control(app_control_h app_control, void *user_data)
 		// We don't have extra data, just show the alarm window
 		//@@TODO: Remove the code that creates it
 
-		// Vibrate to get user's attention
-		alarm_vibrate();
+
+
+		// Turn on the screen
+		ret = device_power_wakeup(false);
+		if (ret != DEVICE_ERROR_NONE)
+		{
+			dlog_print(DLOG_ERROR, LOG_TAG, "Failed to turn display on.");
+		}
+		ret = device_power_request_lock(POWER_LOCK_DISPLAY, 1000);
+		if (ret != DEVICE_ERROR_NONE)
+		{
+			dlog_print(DLOG_ERROR, LOG_TAG, "Failed to lock the display on.");
+		}
 
 		/*
 		 * Create a layout when the alarm sounds.
@@ -251,11 +263,15 @@ static void app_control(app_control_h app_control, void *user_data)
 		nf = view_get_naviframe();
 		_create_layout_ring_alarm(nf, saved_time);
 
+		// Vibrate to get user's attention
+		alarm_vibrate();
+
+
 		/*
 		 * Remove widget and genlist's item that is consistent with alarm id.
 		 */
-		alarm_destroy_widget(gendata);
-		elm_object_item_del(item);
+		// alarm_destroy_widget(gendata);
+		// elm_object_item_del(item);
 
 	} else if (!strncmp(APP_CONTROL_OPERATION_MAIN, operation, strlen(APP_CONTROL_OPERATION_MAIN))) {
 		evas_object_show(view_get_window());
