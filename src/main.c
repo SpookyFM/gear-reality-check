@@ -264,7 +264,7 @@ static void app_control(app_control_h app_control, void *user_data)
 		_create_layout_ring_alarm(nf, saved_time);
 
 		// Vibrate to get user's attention
-		alarm_vibrate();
+		start_alarm_vibrate();
 
 
 		/*

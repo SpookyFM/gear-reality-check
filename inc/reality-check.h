@@ -10,6 +10,7 @@
 
 void test();
 
+void start_alarm_vibrate();
 int update_alarms(app_control_h app_control);
 
 

@@ -12,9 +12,12 @@
 #include <app_preference.h>
 #include <haptic.h>
 #include <dlog.h>
+#include <Ecore.h>
 
 #include "gear-reality-check.h"
 #include "reality-check.h"
+
+Eina_Bool alarm_vibrate(void* vp_counter);
 
 const char* num_reminders_key = "num_reminders";
 const char* start_time_hours_key = "start_time_hours";
@@ -22,6 +25,18 @@ const char* start_time_mins_key = "start_time_mins";
 const char* end_time_hours_key = "end_time_hours";
 const char* end_time_mins_key = "end_time_mins";
 const char* last_handled_date_key = "last_handled_date";
+
+const int num_times_vibrate = 3;
+const int vibration_msec = 300;
+const int vibration_pause_msec = 300;
+
+typedef struct {
+	haptic_device_h device_handle;
+	haptic_effect_h effect_handle;
+	Ecore_Timer* timer;
+	int counter;
+} vibration_data_s;
+
 
 
 // Plan:
@@ -300,15 +315,17 @@ int update_alarms(app_control_h app_control)
 	ret = alarm_schedule_at_date(app_control, &soon, 0, &alarm_id); */
 
 
-
 	return TIZEN_ERROR_NONE;
 }
 
+
 /*
- * @brief Activates the vibration during an alarm
+ * @brief Starts the vibration pattern for the alarm
+ * The parameter counter is incr
  */
-void alarm_vibrate()
+void start_alarm_vibrate()
 {
+	// Prepare the vibration by opening the device
 	// Check how many vibrators we have
 	int device_haptic_count = 0;
 	int ret = 0;
@@ -321,39 +338,70 @@ void alarm_vibrate()
 		return;
 	}
 
-	haptic_device_h device_handle;
+	vibration_data_s* vibration_data = malloc(sizeof(vibration_data_s));
 
 	// Open the first vibrator
-	ret = device_haptic_open(0, &device_handle);
+	ret = device_haptic_open(0, &vibration_data->device_handle);
 	if (ret != DEVICE_ERROR_NONE)
 	{
 		dlog_print(DLOG_INFO, LOG_TAG, "Error opening haptic device.");
+		free(vibration_data);
 		return;
 	}
 
-	haptic_effect_h effect_handle;
+	vibration_data->counter = 0;
 
-	// Start vibrating
-	ret = device_haptic_vibrate(device_handle, 500, 100, effect_handle);
-	if (ret != DEVICE_ERROR_NONE)
-	{
-		dlog_print(DLOG_INFO, LOG_TAG, "Error starting vibration.");
-		return;
-	}
-
-	/* ret = device_haptic_close(device_handle);
-	if (ret != DEVICE_ERROR_NONE)
-	{
-		dlog_print(DLOG_INFO, LOG_TAG, "Error closing haptic device.");
-		return;
-	} */
-
-	//@@TODO: Should also close the device again
+	// Start the first vibration
+	alarm_vibrate(vibration_data);
 }
 
 
+/*
+ * @brief Callback for the alarm vibration.
+ */
+Eina_Bool alarm_vibrate(void* vp_vibration_data)
+{
+	vibration_data_s* vibration_data = (vibration_data_s*) vp_vibration_data;
+	dlog_print(DLOG_INFO, LOG_TAG, "Entered alarm_vibrate, counter: %d", vibration_data->counter);
+	if (vibration_data->counter < num_times_vibrate)
+	{
+		// Start vibrating
+		int ret = device_haptic_vibrate(vibration_data->device_handle, vibration_msec, 100, &vibration_data->effect_handle);
+		if (ret != DEVICE_ERROR_NONE)
+		{
+			dlog_print(DLOG_ERROR, LOG_TAG, "Error starting vibration.");
+			return EINA_FALSE;
+		}
 
-void test()
+		if (vibration_data->counter == 0)
+		{
+			dlog_print(DLOG_INFO, LOG_TAG, "Starting timer for %d msec", vibration_msec + vibration_pause_msec);
+			// If this is the first time, we also need to set up the timer
+			vibration_data->timer = ecore_timer_add(((double)(vibration_msec + vibration_pause_msec)) / 1000.0 , alarm_vibrate, vibration_data);
+			if (!vibration_data->timer)
+			{
+				dlog_print(DLOG_INFO, LOG_TAG, "Error starting timer.");
+			}
+		}
+	} else
+	{
+		// We need to stop vibrating
+		int ret = device_haptic_close(vibration_data->device_handle);
+		if (ret != DEVICE_ERROR_NONE)
+		{
+			dlog_print(DLOG_INFO, LOG_TAG, "Error closing haptic device.");
+			return EINA_FALSE;
+		}
+		free(vibration_data);
+		return EINA_FALSE;
+	}
+
+	vibration_data->counter += 1;
+	return EINA_TRUE;
+}
+
+
+ void test()
 {
 	/* struct tm today;
 	alarm_get_current_time(&today);
