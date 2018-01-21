@@ -308,11 +308,16 @@ int update_alarms(app_control_h app_control)
 
 
 	// For testing purposes, schedule one in a few seconds
-	/* int alarm_id;
-	struct tm soon;
-	ret = alarm_get_current_time(&soon);
-	soon.tm_sec += 20;
-	ret = alarm_schedule_at_date(app_control, &soon, 0, &alarm_id); */
+	bool debug_alarms = true;
+
+	if (debug_alarms)
+	{
+		int alarm_id;
+		struct tm soon;
+		ret = alarm_get_current_time(&soon);
+		soon.tm_sec += 20;
+		ret = alarm_schedule_at_date(app_control, &soon, 0, &alarm_id);
+	}
 
 
 	return TIZEN_ERROR_NONE;

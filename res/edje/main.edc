@@ -21,7 +21,7 @@ images {
 
 collections {
    base_scale: 1.0;
-   
+
    styles {
       style { name: "basic_style";
          base: "font="Sans" font_size=20 text_class=entry color=#FFFFFF style=soft_outline outline_color=#0088AA64 valign=0.5 ellipsis=1.0 wrap=none align=center";
@@ -45,7 +45,7 @@ collections {
          base: "font="Sans" font_size=15 text_class=entry color=#FFFFFF style=soft_outline outline_color=#5F00FF valign=0.5 ellipsis=0.0 wrap=none align=center";
       }
    }
-   
+
    group { name: "base_alarm";
       parts {
          part { name: "base";
@@ -277,6 +277,18 @@ collections {
                rel2.to: "base";
                rel2.offset: 0 -30;
                fixed: 1 1;
+            }
+         }
+         // Flashing rectangle
+         part { name: "flashing.rect";
+            type: RECT;
+            scale: 1;
+            description { state: "default" 0.0;
+               color: 0 136 170 255;
+               visible: 1;
+               align: 0.5 0.5;
+               rel1.relative: 0.0 0.0;
+               rel2.relative: 1 1;
             }
          }
       } // parts

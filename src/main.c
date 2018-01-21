@@ -25,6 +25,8 @@
 #include <widget_errno.h>
 #include <device/power.h>
 
+#include <Elementary.h>
+
 #include "gear-reality-check.h"
 #include "data.h"
 #include "view.h"
@@ -48,10 +50,18 @@ static struct main_info {
 	.first_alarm = EINA_FALSE,
 };
 
+
+static struct anim_data {
+	Evas_Object* rect;
+	int a;
+	int direction;
+	int count;
+};
+
 static Evas_Object *_create_layout_no_alarmlist(Evas_Object *parent, const char *edje_path, const char *group_name);
 static void _set_layout_exist_alarmlist(Evas_Object *layout);
 static Evas_Object *_create_layout_set_time(Evas_Object *parent);
-static void _create_layout_ring_alarm(Evas_Object *parent, struct tm *saved_time);
+static Evas_Object* _create_layout_ring_alarm(Evas_Object *parent, struct tm *saved_time);
 static Eina_Bool _naviframe_pop_cb(void *data, Elm_Object_Item *it);
 static void _no_alarm_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _no_alarm_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -201,6 +211,45 @@ static bool app_create(void *user_data)
 	return true;
 }
 
+
+static Eina_Bool on_next_frame1(void *data)
+{
+	struct anim_data* my_anim_data = (struct anim_data*) data;
+	const float tick_rate = 1.0 / 60.0;
+	// This is how long it should take for one cycle white -> transparent -> white
+	const float period = 0.4f;
+	const float range = 255.0f;
+	const float half_period = period * 0.5f;
+	const float rate_of_change = (tick_rate / half_period) * range;
+
+	my_anim_data->a += my_anim_data->direction * rate_of_change;
+	if (my_anim_data->a < 0)
+	{
+		my_anim_data->a = 0;
+		my_anim_data->direction = 1;
+		my_anim_data->count++;
+	} else if (my_anim_data->a > 255)
+	{
+		my_anim_data->a = 255;
+		my_anim_data->direction = -1;
+		my_anim_data->count++;
+	}
+
+	evas_object_color_set(my_anim_data->rect, 255, 255, 255, my_anim_data->a);
+	if (my_anim_data->count < 5)
+	{
+		return ECORE_CALLBACK_RENEW;
+	} else
+	{
+		evas_object_hide(my_anim_data->rect);
+		evas_object_del(my_anim_data->rect);
+		free(my_anim_data);
+		return ECORE_CALLBACK_DONE;
+	}
+}
+
+
+
 /*
  * @brief This callback function is called when another application
  * sends the launch request to the application
@@ -261,10 +310,33 @@ static void app_control(app_control_h app_control, void *user_data)
 		 */
 		saved_time = &gendata->saved_time;
 		nf = view_get_naviframe();
-		_create_layout_ring_alarm(nf, saved_time);
+		if (!nf)
+		{
+			return;
+		}
+		Evas_Object* layout_ring_alarm = _create_layout_ring_alarm(nf, saved_time);
 
 		// Vibrate to get user's attention
 		start_alarm_vibrate();
+
+		// Playing around with animations
+		// Get the rectangle for animation purposes
+		Evas_Object* layout_edje = elm_layout_edje_get(layout_ring_alarm);
+
+		const Evas_Object* rect = edje_object_part_object_get(layout_edje, "flashing.rect");
+		if (rect)
+		{
+			struct anim_data* my_anim_data = malloc(sizeof(struct anim_data));
+			my_anim_data->direction = -1;
+			my_anim_data->count = 0;
+			my_anim_data->rect = rect;
+			my_anim_data->a = 255;
+			ecore_animator_add(on_next_frame1, my_anim_data);
+			ecore_animator_frametime_set(1. / 60);
+		} else
+		{
+			dlog_print(DLOG_INFO, LOG_TAG, "Unable to find the rectangle");
+		}
 
 
 		/*
@@ -532,7 +604,7 @@ static Evas_Object *_create_layout_set_time(Evas_Object *parent)
  * @param[in] parent The object to which you want to add this layout
  * @param[in] saved_time Time that sound the alarm
  */
-static void _create_layout_ring_alarm(Evas_Object *parent, struct tm *saved_time)
+static Evas_Object* _create_layout_ring_alarm(Evas_Object *parent, struct tm *saved_time)
 {
 	Evas_Object *layout = NULL;
 	char buf[BUF_LEN] = {0, };
@@ -540,7 +612,7 @@ static void _create_layout_ring_alarm(Evas_Object *parent, struct tm *saved_time
 
 	if (parent == NULL) {
 		dlog_print(DLOG_ERROR, LOG_TAG, "failed to get parent.");
-		return;
+		return NULL;
 	}
 
 	/*
@@ -551,13 +623,22 @@ static void _create_layout_ring_alarm(Evas_Object *parent, struct tm *saved_time
 	layout = view_create_layout(parent, file_path, "ringing_alarm", NULL, NULL);
 	if (layout == NULL) {
 		dlog_print(DLOG_ERROR, LOG_TAG, "failed to create a layout.");
-		return;
+		return NULL;
 	}
 
 	if (saved_time) {
 		strftime(buf, sizeof(buf) - 1, "%l:%M %p", saved_time);
 		view_set_text(layout, "ringing_alarm.text", buf);
 	}
+
+	Evas_Object* test = elm_layout_edje_get(layout);
+
+
+	dlog_print(DLOG_INFO, LOG_TAG, "Testing if 'ringing_alarm.text' part exists: %s\n",
+	           edje_object_part_exists(test, "ringing_alarm.text") ? "yes!" : "no");
+
+	dlog_print(DLOG_INFO, LOG_TAG, "Testing if 'flashing.rect' part exists: %s\n",
+		           edje_object_part_exists(test, "flashing.rect") ? "yes!" : "no");
 
 	/*
 	 * Set bottom button.
@@ -566,6 +647,8 @@ static void _create_layout_ring_alarm(Evas_Object *parent, struct tm *saved_time
 	view_set_button(layout, "swallow.button", "bottom", NULL, "Dismiss", NULL, NULL, _dismiss_clicked_cb, NULL);
 
 	view_push_item_to_naviframe(parent, layout, NULL, NULL);
+
+	return layout;
 }
 
 /*
