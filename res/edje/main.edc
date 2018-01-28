@@ -55,6 +55,23 @@ collections {
                rel2.relative: 1.0 1.0;
             }
          }
+         
+         // Spinner for the number of alarms
+         part { name: "spinner.number_of_alarms";
+            type: EXTERNAL;
+            source: "elm/spinner";
+            description { state: "default" 0;
+               align: 0 0;
+               rel1.relative: 0.1 0.4;
+               rel2.relative: 0.9 0.5;
+               params {
+                  string: "style" "default";
+               }
+            }
+         }
+
+         
+         
          part { name: "no_alarm.title";
             type: TEXT;
             scale: 1;
@@ -82,6 +99,7 @@ collections {
                visible: 0;
             }
          }
+         /* 
          part { name: "swallow.no_alarm.button";
             type: SWALLOW;
             mouse_events: 1;
@@ -94,8 +112,8 @@ collections {
                max: 98 98;
                fixed: 1 1;
             }
-         }
-         part { name: "no_alarm.img";
+         } */
+         /* part { name: "no_alarm.img";
             type: IMAGE;
             mouse_events: 0;
             description { state: "default" 0.0;
@@ -116,6 +134,7 @@ collections {
                visible: 0;
             }
          }
+         */
          part { name: "no_alarm.text";
             type: TEXT;
             scale: 1;
@@ -187,14 +206,14 @@ collections {
             signal: "mouse.down";
             source: "button";
             action: STATE_SET "dim" 0.0;
-            target: "no_alarm.img";
+         //   target: "no_alarm.img";
             target: "no_alarm.text";
          }
          program {
             signal: "mouse.up";
             source: "button";
             action: STATE_SET "default" 0.0;
-            target: "no_alarm.img";
+           // target: "no_alarm.img";
             target: "no_alarm.text";
          }
          program {
@@ -204,8 +223,8 @@ collections {
             target: "swallow.genlist";
             target: "swallow.genlist.button";
             target: "no_alarm.title";
-            target: "swallow.no_alarm.button";
-            target: "no_alarm.img";
+           // target: "swallow.no_alarm.button";
+         //   target: "no_alarm.img";
             target: "no_alarm.text";
          }
          program {
@@ -215,8 +234,8 @@ collections {
             target: "swallow.genlist";
             target: "swallow.genlist.button";
             target: "no_alarm.title";
-            target: "swallow.no_alarm.button";
-            target: "no_alarm.img";
+        //    target: "swallow.no_alarm.button";
+         //   target: "no_alarm.img";
             target: "no_alarm.text";
          }
       } // programs

@@ -46,6 +46,8 @@ Evas_Object *view_create_circle_genlist(Evas_Object *parent);
 Elm_Object_Item *view_append_item_to_genlist(Evas_Object *genlist, const char *style, const void *data, Evas_Smart_Cb _clicked_cb, const void *cb_data);
 Elm_Object_Item *view_alarm_find_item_from_genlist(Evas_Object *genlist, int val);
 
+void view_set_spinner(Evas_Object* parent, const char* part_name, double min, double max);
+
 void view_set_button(Evas_Object *parent, const char *part_name, const char *style, const char *image_path, const char *text,
 		Evas_Object_Event_Cb down_cb, Evas_Object_Event_Cb up_cb, Evas_Smart_Cb clicked_cb, void *data);
 

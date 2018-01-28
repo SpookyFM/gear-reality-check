@@ -511,7 +511,9 @@ static Evas_Object *_create_layout_no_alarmlist(Evas_Object *parent, const char 
 
 	view_set_text(layout, "no_alarm.title", "Alarm");
 
-	view_set_button(layout, "swallow.no_alarm.button", "focus", NULL, NULL, _no_alarm_down_cb, _no_alarm_up_cb, _no_alarm_clicked_cb, layout);
+	// view_set_button(layout, "swallow.no_alarm.button", "focus", NULL, NULL, _no_alarm_down_cb, _no_alarm_up_cb, _no_alarm_clicked_cb, layout);
+
+	view_set_spinner(layout, "spinner.number_of_alarms", 1, 10);
 
 	view_set_text(layout, "no_alarm.text", "Add alarm");
 

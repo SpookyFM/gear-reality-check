@@ -308,7 +308,7 @@ int update_alarms(app_control_h app_control)
 
 
 	// For testing purposes, schedule one in a few seconds
-	bool debug_alarms = true;
+	bool debug_alarms = false;
 
 	if (debug_alarms)
 	{

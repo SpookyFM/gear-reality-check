@@ -556,6 +556,14 @@ Elm_Object_Item *view_alarm_find_item_from_genlist(Evas_Object *genlist, int val
 	return NULL;
 }
 
+
+void view_set_spinner(Evas_Object* parent, const char* part_name, double min, double max)
+{
+	Evas_Object *spinner = edje_object_part_external_object_get(elm_layout_edje_get(parent), "spinner.number_of_alarms");
+	elm_spinner_min_max_set(spinner, min, max);
+	double value = elm_spinner_value_get(spinner);
+}
+
 /*
  * @brief Makes and set a button.
  * @param[in] parent Object to which you want to set the button
