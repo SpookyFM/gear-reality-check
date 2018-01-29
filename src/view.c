@@ -559,9 +559,18 @@ Elm_Object_Item *view_alarm_find_item_from_genlist(Evas_Object *genlist, int val
 
 void view_set_spinner(Evas_Object* parent, const char* part_name, double min, double max)
 {
-	Evas_Object *spinner = edje_object_part_external_object_get(elm_layout_edje_get(parent), "spinner.number_of_alarms");
+	Evas_Object *spinner = edje_object_part_external_object_get(elm_layout_edje_get(parent), part_name);
 	elm_spinner_min_max_set(spinner, min, max);
 	double value = elm_spinner_value_get(spinner);
+}
+
+
+void view_set_datetime(Evas_Object* parent, const char* part_name)
+{
+	Evas_Object *datetime = edje_object_part_external_object_get(elm_layout_edje_get(parent), part_name);
+	
+	// TODO: Set up time-only
+	//https://developer.tizen.org/development/api-references/native-application?redirect=/dev-guide/latest/org.tizen.native.wearable.apireference/group__Elm__Datetime.html
 }
 
 /*

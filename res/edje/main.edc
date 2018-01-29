@@ -56,6 +56,7 @@ collections {
             }
          }
          
+		 //TODO: Label
          // Spinner for the number of alarms
          part { name: "spinner.number_of_alarms";
             type: EXTERNAL;
@@ -69,7 +70,51 @@ collections {
                }
             }
          }
-
+		 
+		// TODO: Label
+		// DateTime for the earliest time
+		part { name: "datetime.min_time";
+            type: EXTERNAL;
+            source: "elm/datetime";
+            description { state: "default" 0;
+               align: 0 0;
+               rel1.relative: 0.1 0.4;
+               rel2.relative: 0.9 0.5;
+               params {
+                  string: "style" "default";
+               }
+            }
+         }
+		 
+		 // TODO: Label
+		// DateTime for the latest time
+		part { name: "datetime.max_time";
+            type: EXTERNAL;
+            source: "elm/datetime";
+            description { state: "default" 0;
+               align: 0 0;
+               rel1.relative: 0.1 0.4;
+               rel2.relative: 0.9 0.5;
+               params {
+                  string: "style" "default";
+               }
+            }
+         }
+		 
+		 // TODO: Needs to be set up as a button
+         part { name: "swallow.apply_settings_button";
+            type: SWALLOW;
+            mouse_events: 1;
+            description { state: "default" 0.0;
+               rel1.relative: 0.5 0.5;
+               rel1.to: "base";
+               rel2.relative: 0.5 0.5;
+               rel2.to: "base";
+               min: 98 98;
+               max: 98 98;
+               fixed: 1 1;
+            }
+         }
          
          
          part { name: "no_alarm.title";
