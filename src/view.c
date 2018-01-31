@@ -567,8 +567,42 @@ void view_set_spinner(Evas_Object* parent, const char* part_name, double min, do
 
 void view_set_datetime(Evas_Object* parent, const char* part_name)
 {
-	Evas_Object *datetime = edje_object_part_external_object_get(elm_layout_edje_get(parent), part_name);
-	
+	Evas_Object *datetime = NULL;
+
+	if (parent == NULL) {
+		dlog_print(DLOG_ERROR, LOG_TAG, "parent is NULL.");
+		return;
+	}
+
+	datetime = elm_datetime_add(parent);
+	if (datetime == NULL) {
+		dlog_print(DLOG_ERROR, LOG_TAG, "failed to create datetime.");
+		return;
+	}
+
+//	if (style)
+//		elm_object_style_set(btn, style);
+
+	evas_object_size_hint_weight_set(datetime, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	elm_object_part_content_set(parent, part_name, datetime);
+
+	/* if (text)
+		elm_object_text_set(btn, text);
+
+	if (image_path)
+		view_set_image(btn, NULL, image_path);
+
+	if (down_cb)
+		evas_object_event_callback_add(btn, EVAS_CALLBACK_MOUSE_DOWN, down_cb, data);
+	if (up_cb)
+		evas_object_event_callback_add(btn, EVAS_CALLBACK_MOUSE_UP, up_cb, data);
+	if (clicked_cb)
+		evas_object_smart_callback_add(btn, "clicked", clicked_cb, data); */
+
+	evas_object_show(datetime);
+
+	const char * format = elm_datetime_format_get (datetime);
+
 	// TODO: Set up time-only
 	//https://developer.tizen.org/development/api-references/native-application?redirect=/dev-guide/latest/org.tizen.native.wearable.apireference/group__Elm__Datetime.html
 }

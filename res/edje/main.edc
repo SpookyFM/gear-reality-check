@@ -55,52 +55,142 @@ collections {
                rel2.relative: 1.0 1.0;
             }
          }
-         
-		 //TODO: Label
+
+         // Label
+         part { name: "text.label_num_alarms";
+            type: TEXT;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.relative: 0.5 0.5;
+               rel1.offset: 0 -110;
+               rel1.to: "base";
+               rel2.relative: 0.5 0.5;
+               rel2.offset: 0 -110;
+               rel2.to: "base";
+               fixed: 1 1;
+               min: 283 47;
+               color: 54 138 255 255;
+               text {
+                  font: TIZEN_SANS":style=Bold";
+                  text: "Number of reminders";
+                  text_class: "tizen";
+                  min: 0 1;
+                  size: 15;
+                  align: 0.5 0.5;
+               }
+            }
+            description { state: "genlist_show" 0.0;
+               inherit: "default";
+               visible: 1;
+            }
+         }
+
          // Spinner for the number of alarms
          part { name: "spinner.number_of_alarms";
             type: EXTERNAL;
             source: "elm/spinner";
             description { state: "default" 0;
                align: 0 0;
-               rel1.relative: 0.1 0.4;
-               rel2.relative: 0.9 0.5;
+               rel1.to: "text.label_num_alarms";
+               rel1.relative: 0.5 0.5;
+               rel1.offset: 0 100;
+               rel2.relative: 0.5 0.5;
+               rel2.offset: 0 100;
                params {
                   string: "style" "default";
                }
             }
          }
-		 
-		// TODO: Label
+
+
+          // Label
+         part { name: "text.label_earliest_time";
+            type: TEXT;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.relative: 0.5 0.5;
+               rel1.offset: 0 -110;
+               rel1.to: "spinner.number_of_alarms";
+               rel2.relative: 0.5 0.5;
+               rel2.offset: 0 -110;
+               rel2.to: "spinner.number_of_alarms";
+               fixed: 1 1;
+               min: 283 47;
+               color: 54 138 255 255;
+               text {
+                  font: TIZEN_SANS":style=Bold";
+                  text: "Earliest time";
+                  text_class: "tizen";
+                  min: 0 1;
+                  size: 15;
+                  align: 0.5 0.5;
+               }
+            }
+            description { state: "genlist_show" 0.0;
+               inherit: "default";
+               visible: 1;
+            }
+         }
+
 		// DateTime for the earliest time
-		part { name: "datetime.min_time";
-            type: EXTERNAL;
-            source: "elm/datetime";
+         part { name: "datetime.min_time";
+            type: SWALLOW;
             description { state: "default" 0;
                align: 0 0;
-               rel1.relative: 0.1 0.4;
-               rel2.relative: 0.9 0.5;
-               params {
-                  string: "style" "default";
-               }
+               rel1.to: "text.label_earliest_time";
+               rel1.relative: 0.5 0.5;
+               rel1.offset: 0 100;
+               rel2.relative: 0.5 0.5;
+               rel2.offset: 0 100;
             }
          }
-		 
-		 // TODO: Label
+
+		 // Label
+         part { name: "text.label_latest_time";
+            type: TEXT;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.relative: 0.5 0.5;
+               rel1.offset: 0 -110;
+               rel1.to: "datetime.min_time";
+               rel2.relative: 0.5 0.5;
+               rel2.offset: 0 -110;
+               rel2.to: "datetime.min_time";
+               fixed: 1 1;
+               min: 283 47;
+               color: 54 138 255 255;
+               text {
+                  font: TIZEN_SANS":style=Bold";
+                  text: "Latest time";
+                  text_class: "tizen";
+                  min: 0 1;
+                  size: 15;
+                  align: 0.5 0.5;
+               }
+            }
+            description { state: "genlist_show" 0.0;
+               inherit: "default";
+               visible: 1;
+            }
+         }
+
 		// DateTime for the latest time
-		part { name: "datetime.max_time";
+         part { name: "datetime.max_time";
             type: EXTERNAL;
             source: "elm/datetime";
             description { state: "default" 0;
                align: 0 0;
-               rel1.relative: 0.1 0.4;
-               rel2.relative: 0.9 0.5;
+               rel1.to: "text.label_latest_time";
+               rel1.relative: 0.5 0.5;
+               rel1.offset: 0 100;
+               rel2.relative: 0.5 0.5;
+               rel2.offset: 0 100;
                params {
                   string: "style" "default";
                }
             }
          }
-		 
+
 		 // TODO: Needs to be set up as a button
          part { name: "swallow.apply_settings_button";
             type: SWALLOW;
@@ -115,8 +205,8 @@ collections {
                fixed: 1 1;
             }
          }
-         
-         
+
+
          part { name: "no_alarm.title";
             type: TEXT;
             scale: 1;
