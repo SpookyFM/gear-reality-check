@@ -46,6 +46,7 @@ collections {
       }
    }
 
+
    group { name: "base_alarm";
       parts {
          part { name: "base";
@@ -61,13 +62,17 @@ collections {
             type: TEXT;
             scale: 1;
             description { state: "default" 0.0;
-               rel1.relative: 0.5 0.5;
-               rel1.offset: 0 -110;
-               rel1.to: "base";
-               rel2.relative: 0.5 0.5;
-               rel2.offset: 0 -110;
-               rel2.to: "base";
+               visible: 1;
+                  // set that the part does not change size
                fixed: 1 1;
+               align: 0.0 0.0;
+               rel1.relative: 0.0 0.0;
+               rel1.offset: 0 0;
+               rel1.to: "base";
+               rel2.relative: 0.0 0.0;
+               rel2.offset: 0 0;
+               rel2.to: "base";
+
                min: 283 47;
                color: 54 138 255 255;
                text {
@@ -76,12 +81,7 @@ collections {
                   text_class: "tizen";
                   min: 0 1;
                   size: 15;
-                  align: 0.5 0.5;
                }
-            }
-            description { state: "genlist_show" 0.0;
-               inherit: "default";
-               visible: 1;
             }
          }
 
@@ -91,14 +91,16 @@ collections {
             source: "elm/spinner";
             description { state: "default" 0;
                align: 0 0;
-               rel1.to: "text.label_num_alarms";
-               rel1.relative: 0.5 0.5;
-               rel1.offset: 0 100;
-               rel2.relative: 0.5 0.5;
-               rel2.offset: 0 100;
                params {
                   string: "style" "default";
                }
+               // min: 100 100;
+               rel1.relative: 0.0 0.5;
+               rel1.offset: 0 0;
+               rel1.to: "text.label_num_alarms";
+               rel2.relative: 0.0 1.0;
+               rel2.offset: 0 0;
+               rel2.to: "text.label_num_alarms";
             }
          }
 
@@ -108,12 +110,6 @@ collections {
             type: TEXT;
             scale: 1;
             description { state: "default" 0.0;
-               rel1.relative: 0.5 0.5;
-               rel1.offset: 0 -110;
-               rel1.to: "spinner.number_of_alarms";
-               rel2.relative: 0.5 0.5;
-               rel2.offset: 0 -110;
-               rel2.to: "spinner.number_of_alarms";
                fixed: 1 1;
                min: 283 47;
                color: 54 138 255 255;
@@ -123,12 +119,15 @@ collections {
                   text_class: "tizen";
                   min: 0 1;
                   size: 15;
-                  align: 0.5 0.5;
                }
-            }
-            description { state: "genlist_show" 0.0;
-               inherit: "default";
                visible: 1;
+               align: 0.0 0.0;
+               rel1.relative: 0.0 0.5;
+               rel1.offset: 0 0;
+               rel1.to: "spinner.number_of_alarms";
+               rel2.relative: 0.0 1.0;
+               rel2.offset: 0 0;
+               rel2.to: "spinner.number_of_alarms";
             }
          }
 
@@ -136,12 +135,15 @@ collections {
          part { name: "datetime.min_time";
             type: SWALLOW;
             description { state: "default" 0;
-               align: 0 0;
+               visible: 1;
+               align: 0.0 0.0;
+               // min:100 100;
+               rel1.relative: 0.0 0.5;
+               rel1.offset: 0 0;
                rel1.to: "text.label_earliest_time";
-               rel1.relative: 0.5 0.5;
-               rel1.offset: 0 100;
-               rel2.relative: 0.5 0.5;
-               rel2.offset: 0 100;
+               rel2.relative: 0.0 1.0;
+               rel2.offset: 0 0;
+               rel2.to: "text.label_earliest_time";
             }
          }
 
@@ -150,12 +152,6 @@ collections {
             type: TEXT;
             scale: 1;
             description { state: "default" 0.0;
-               rel1.relative: 0.5 0.5;
-               rel1.offset: 0 -110;
-               rel1.to: "datetime.min_time";
-               rel2.relative: 0.5 0.5;
-               rel2.offset: 0 -110;
-               rel2.to: "datetime.min_time";
                fixed: 1 1;
                min: 283 47;
                color: 54 138 255 255;
@@ -165,13 +161,16 @@ collections {
                   text_class: "tizen";
                   min: 0 1;
                   size: 15;
-                  align: 0.5 0.5;
                }
+               align: 0.0 0.0;
+               rel1.relative: 0.0 0.5;
+               rel1.offset: 0 0;
+               rel1.to: "datetime.min_time";
+               rel2.relative: 0.0 1.0;
+               rel2.offset: 0 0;
+               rel2.to: "datetime.min_time";
             }
-            description { state: "genlist_show" 0.0;
-               inherit: "default";
-               visible: 1;
-            }
+           
          }
 
 		// DateTime for the latest time
@@ -180,14 +179,16 @@ collections {
             source: "elm/datetime";
             description { state: "default" 0;
                align: 0 0;
-               rel1.to: "text.label_latest_time";
-               rel1.relative: 0.5 0.5;
-               rel1.offset: 0 100;
-               rel2.relative: 0.5 0.5;
-               rel2.offset: 0 100;
                params {
                   string: "style" "default";
                }
+               // min: 100 100;
+               rel1.relative: 0.0 0.5;
+               rel1.offset: 0 0;
+               rel1.to: "text.label_latest_time";
+               rel2.relative: 0.0 1.0;
+               rel2.offset: 0 0;
+               rel2.to: "text.label_latest_time";
             }
          }
 
@@ -196,171 +197,45 @@ collections {
             type: SWALLOW;
             mouse_events: 1;
             description { state: "default" 0.0;
-               rel1.relative: 0.5 0.5;
-               rel1.to: "base";
-               rel2.relative: 0.5 0.5;
-               rel2.to: "base";
-               min: 98 98;
-               max: 98 98;
+               //min: 98 98;
+               // max: 98 98;
                fixed: 1 1;
+               align: 0.0 0.0;
+               rel1.relative: 0.0 0.5;
+               rel1.offset: 0 0;
+               rel1.to: "datetime.max_time";
+               rel2.relative: 0.0 1.0;
+               rel2.offset: 0 0;
+               rel2.to: "datetime.max_time";
             }
          }
 
-
-         part { name: "no_alarm.title";
-            type: TEXT;
-            scale: 1;
-            description { state: "default" 0.0;
-               rel1.relative: 0.5 0.5;
-               rel1.offset: 0 -110;
-               rel1.to: "base";
-               rel2.relative: 0.5 0.5;
-               rel2.offset: 0 -110;
-               rel2.to: "base";
-               fixed: 1 1;
-               min: 283 47;
-               color: 54 138 255 255;
-               text {
-                  font: TIZEN_SANS":style=Bold";
-                  text: "Alarm";
-                  text_class: "tizen";
-                  min: 0 1;
-                  size: 25;
-                  align: 0.5 0.5;
-               }
-            }
-            description { state: "genlist_show" 0.0;
-               inherit: "default";
-               visible: 0;
-            }
-         }
-         /* 
-         part { name: "swallow.no_alarm.button";
-            type: SWALLOW;
-            mouse_events: 1;
-            description { state: "default" 0.0;
-               rel1.relative: 0.5 0.5;
-               rel1.to: "base";
-               rel2.relative: 0.5 0.5;
-               rel2.to: "base";
-               min: 98 98;
-               max: 98 98;
-               fixed: 1 1;
-            }
-         } */
-         /* part { name: "no_alarm.img";
-            type: IMAGE;
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               rel1.to: "swallow.no_alarm.button";
-               rel2.to: "swallow.no_alarm.button";
-               image.normal: "alarm_no_alarm_icon.png";
-               min: 98 98;
-               max: 98 98;
-               fixed: 1 1;
-               visible: 1;
-            }
-            description { state: "dim" 0.0;
-               inherit: "default";
-               color: 255 255 255 100;
-            }
-            description { state: "genlist_show" 0.0;
-               inherit: "default";
-               visible: 0;
-            }
-         }
-         */
-         part { name: "no_alarm.text";
-            type: TEXT;
-            scale: 1;
-            description { state: "default" 0.0;
-               rel1.relative: 0.5 0.5;
-               rel1.offset: 0 110;
-               rel1.to: "base";
-               rel2.relative: 0.5 0.5;
-               rel2.offset: 0 110;
-               rel2.to: "base";
-               color: 255 255 255 255;
-               fixed: 1 1;
-               min: 283 47;
-               text {
-                  font: TIZEN_SANS":style=Regular";
-                  text: "Add alarm";
-                  text_class: "tizen";
-                  min: 0 1;
-                  size: 22;
-                  align: 0.5 0.5;
-               }
-            }
-            description { state: "dim" 0.0;
-               inherit: "default";
-               color: 255 255 255 100;
-            }
-            description { state: "genlist_show" 0.0;
-               inherit: "default";
-               visible: 0;
-            }
-         }
-         part { name: "swallow.genlist";
-            type: SWALLOW;
-            mouse_events: 1;
-            description { state: "default" 0.0;
-               rel1.relative: 0.0 0.0;
-               rel1.to: "base";
-               rel2.relative: 1.0 1.0;
-               rel2.to: "base";
-               fixed: 1 1;
-               visible: 0;
-            }
-            description { state: "genlist_show" 0.0;
-               inherit: "default";
-               visible: 1;
-            }
-         }
-         part { name: "swallow.genlist.button";
-            type: SWALLOW;
-            mouse_events: 1;
-            description { state: "default" 0.0;
-               rel1.relative: 0.5 1.0;
-               rel1.to: "base";
-               rel1.offset: 0 -30;
-               rel2.relative: 0.5 1.0;
-               rel2.to: "base";
-               rel2.offset: 0 -30;
-               fixed: 1 1;
-               visible: 0;
-            }
-            description { state: "genlist_show" 0.0;
-               inherit: "default";
-               visible: 1;
-            }
-         }
       } // parts
       programs {
-         program {
+        /* program {
             signal: "mouse.down";
             source: "button";
             action: STATE_SET "dim" 0.0;
          //   target: "no_alarm.img";
-            target: "no_alarm.text";
+         //   target: "no_alarm.text";
          }
          program {
             signal: "mouse.up";
             source: "button";
             action: STATE_SET "default" 0.0;
            // target: "no_alarm.img";
-            target: "no_alarm.text";
-         }
-         program {
+        //    target: "no_alarm.text";
+         } */
+       /*  program {
             signal: "genlist.show";
             source: "alarm";
             action: STATE_SET "genlist_show" 0.0;
             target: "swallow.genlist";
             target: "swallow.genlist.button";
-            target: "no_alarm.title";
+       //     target: "no_alarm.title";
            // target: "swallow.no_alarm.button";
          //   target: "no_alarm.img";
-            target: "no_alarm.text";
+        //    target: "no_alarm.text";
          }
          program {
             signal: "genlist.hide";
@@ -368,11 +243,11 @@ collections {
             action: STATE_SET "default" 0.0;
             target: "swallow.genlist";
             target: "swallow.genlist.button";
-            target: "no_alarm.title";
+       //     target: "no_alarm.title";
         //    target: "swallow.no_alarm.button";
          //   target: "no_alarm.img";
-            target: "no_alarm.text";
-         }
+        //    target: "no_alarm.text";
+         } */
       } // programs
    } // group "no_alarm"
    group { name: "ringing_alarm";

@@ -224,7 +224,18 @@ Evas_Object *view_create_layout(Evas_Object *parent, const char *file_path, cons
 		return NULL;
 	}
 
-	layout = elm_layout_add(parent);
+	Evas_Object *scroller;
+
+	scroller = elm_scroller_add(parent);
+
+	// elm_object_style_set(scroller, "handler");
+	// Add an object and set it to the scroller with the elm_object_content_set() function:
+
+	// elm_object_content_set(scroller, layout);
+
+
+
+	layout = elm_layout_add(scroller);
 	elm_layout_file_set(layout, file_path, group_name);
 
 	evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -232,9 +243,9 @@ Evas_Object *view_create_layout(Evas_Object *parent, const char *file_path, cons
 	if (cb_function)
 		eext_object_event_callback_add(layout, EEXT_CALLBACK_BACK, cb_function, user_data);
 
-	evas_object_show(layout);
+	evas_object_show(scroller);
 
-	return layout;
+	return scroller;
 }
 
 /*
