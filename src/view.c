@@ -225,23 +225,61 @@ Evas_Object *view_create_layout(Evas_Object *parent, const char *file_path, cons
 	}
 
 	Evas_Object *scroller;
+	Evas_Object* box;
 
 	scroller = elm_scroller_add(parent);
+
+	box = elm_box_add(scroller);
+
+
+
+	static const char *text = "Lorem ipsum dolor";
+
+	Evas_Object *label;
+	label = elm_label_add(box);
+	elm_object_text_set(label, text);
+	evas_object_show(label);
+	elm_box_pack_end(box, label);
+	evas_object_size_hint_weight_set(label, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(label, EVAS_HINT_FILL, 0.5);
+
+	Evas_Object *label2;
+	label2= elm_label_add(box);
+	elm_object_text_set(label2, "This is the second text.");
+	evas_object_show(label2);
+	elm_box_pack_end(box, label2);
+	evas_object_size_hint_weight_set(label2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(label2, EVAS_HINT_FILL, 0.5);
+
+
+
+
+	evas_object_size_hint_weight_set(scroller, EVAS_HINT_FILL, EVAS_HINT_EXPAND);
+	evas_object_show(scroller);
+	elm_object_content_set(scroller, box);
+	elm_scroller_bounce_set(scroller, EINA_TRUE, EINA_FALSE);
+	elm_scroller_policy_set(scroller, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_ON);
+	elm_scroller_propagate_events_set(scroller, EINA_TRUE);
+	elm_scroller_page_relative_set(scroller, 0, 1);
+	elm_scroller_region_show(scroller, 50, 50, 200, 200);
+
+
+
+
+
 
 	// elm_object_style_set(scroller, "handler");
 	// Add an object and set it to the scroller with the elm_object_content_set() function:
 
+	// layout = elm_layout_add(scroller);
+	// elm_layout_file_set(layout, file_path, group_name);
 	// elm_object_content_set(scroller, layout);
 
 
+	// evas_object_size_hint_weight_set(layout, EVAS_HINT_FILL, EVAS_HINT_EXPAND);
 
-	layout = elm_layout_add(scroller);
-	elm_layout_file_set(layout, file_path, group_name);
-
-	evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-
-	if (cb_function)
-		eext_object_event_callback_add(layout, EEXT_CALLBACK_BACK, cb_function, user_data);
+	// if (cb_function)
+//		eext_object_event_callback_add(layout, EEXT_CALLBACK_BACK, cb_function, user_data);
 
 	evas_object_show(scroller);
 
@@ -634,6 +672,9 @@ void view_set_button(Evas_Object *parent, const char *part_name, const char *sty
 		Evas_Object_Event_Cb down_cb, Evas_Object_Event_Cb up_cb, Evas_Smart_Cb clicked_cb, void *data)
 {
 	Evas_Object *btn = NULL;
+
+	// TODO: Just removed to find out where the random button was coming from
+	return;
 
 	if (parent == NULL) {
 		dlog_print(DLOG_ERROR, LOG_TAG, "parent is NULL.");
