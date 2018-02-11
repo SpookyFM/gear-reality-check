@@ -207,6 +207,31 @@ Evas_Object *view_create_conformant_without_indicator(Evas_Object *win)
 	return conform;
 }
 
+
+Evas_Object *view_create_label(Evas_Object *parent, const char *text)
+{
+	Evas_Object *label;
+	label = elm_label_add(parent);
+	elm_object_text_set(label, text);
+	evas_object_show(label);
+	return label;
+}
+
+Evas_Object *view_create_spinner(Evas_Object *parent)
+{
+	Evas_Object *spinner;
+	spinner = elm_spinner_add(parent);
+	evas_object_show(spinner);
+	return spinner;
+}
+
+void view_box_pack(Evas_Object *box, Evas_Object *new_item)
+{
+	elm_box_pack_end(box, new_item);
+	evas_object_size_hint_weight_set(new_item, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(new_item, EVAS_HINT_FILL, 0.5);
+}
+
 /*
  * @brief Makes a layout to target parent object with edje file.
  * @param[in] parent The object to which you want to add this layout
@@ -231,28 +256,31 @@ Evas_Object *view_create_layout(Evas_Object *parent, const char *file_path, cons
 
 	box = elm_box_add(scroller);
 
+	// Label for the number of reminders
+	Evas_Object *label_num_reminders = view_create_label(box, "Number of reminders");
+	view_box_pack(box, label_num_reminders);
 
+	// Spinner
+	Evas_Object *spinner_num_reminders = view_create_spinner(box);
+	view_box_pack(box, spinner_num_reminders);
 
-	static const char *text = "Lorem ipsum dolor";
+	// Label for the earliest time
+	Evas_Object *label_min_time = view_create_label(box, "Earliest time");
+	view_box_pack(box, label_min_time);
 
-	Evas_Object *label;
-	label = elm_label_add(box);
-	elm_object_text_set(label, text);
-	evas_object_show(label);
-	elm_box_pack_end(box, label);
-	evas_object_size_hint_weight_set(label, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(label, EVAS_HINT_FILL, 0.5);
+	// Datetime
+	Evas_Object * datetime_min_time = view_create_datetime(box);
+	view_box_pack(box, datetime_min_time);
 
-	Evas_Object *label2;
-	label2= elm_label_add(box);
-	elm_object_text_set(label2, "This is the second text.");
-	evas_object_show(label2);
-	elm_box_pack_end(box, label2);
-	evas_object_size_hint_weight_set(label2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(label2, EVAS_HINT_FILL, 0.5);
+	// Label for the latest time
+	Evas_Object *label_max_time = view_create_label(box, "Latest time");
+	view_box_pack(box, label_max_time);
 
+	// Datetime
+	Evas_Object * datetime_max_time = view_create_datetime(box);
+	view_box_pack(box, datetime_max_time);
 
-
+	// @@TODO: https://developer.tizen.org/dev-guide/2.3.1/org.tizen.guides/html/native/ui/styles_wn.htm
 
 	evas_object_size_hint_weight_set(scroller, EVAS_HINT_FILL, EVAS_HINT_EXPAND);
 	evas_object_show(scroller);
@@ -262,10 +290,6 @@ Evas_Object *view_create_layout(Evas_Object *parent, const char *file_path, cons
 	elm_scroller_propagate_events_set(scroller, EINA_TRUE);
 	elm_scroller_page_relative_set(scroller, 0, 1);
 	elm_scroller_region_show(scroller, 50, 50, 200, 200);
-
-
-
-
 
 
 	// elm_object_style_set(scroller, "handler");
@@ -315,38 +339,6 @@ Evas_Object *view_create_layout_by_theme(Evas_Object *parent, const char *class,
 	evas_object_show(layout);
 
 	return layout;
-}
-
-/*
- * @brief Sets datetime to the part.
- * @param[in] parent The object to which you want to set datetime
- * @param[in] style Style of the datetime
- */
-Evas_Object *view_create_datetime(Evas_Object *parent, const char *style)
-{
-	Evas_Object *circle_datetime = NULL;
-
-	if (parent == NULL) {
-		dlog_print(DLOG_ERROR, LOG_TAG, "failed to get parent.");
-		return NULL;
-	}
-
-	if (s_info.circle_surface == NULL) {
-		dlog_print(DLOG_ERROR, LOG_TAG, "failed to get circle_surface.");
-		return NULL;
-	}
-
-	s_info.datetime = elm_datetime_add(parent);
-	circle_datetime = eext_circle_object_datetime_add(s_info.datetime, s_info.circle_surface);
-
-	eext_rotary_object_event_activated_set(s_info.datetime, EINA_TRUE);
-	elm_datetime_format_set(s_info.datetime, FORMAT);
-
-	elm_object_style_set(s_info.datetime, style);
-
-	elm_object_part_content_set(parent, "elm.swallow.content", s_info.datetime);
-
-	return s_info.datetime;
 }
 
 /*
@@ -614,46 +606,28 @@ void view_set_spinner(Evas_Object* parent, const char* part_name, double min, do
 }
 
 
-void view_set_datetime(Evas_Object* parent, const char* part_name)
+Evas_Object *view_create_datetime(Evas_Object *parent)
 {
 	Evas_Object *datetime = NULL;
 
 	if (parent == NULL) {
 		dlog_print(DLOG_ERROR, LOG_TAG, "parent is NULL.");
-		return;
+		return NULL;
 	}
 
 	datetime = elm_datetime_add(parent);
 	if (datetime == NULL) {
 		dlog_print(DLOG_ERROR, LOG_TAG, "failed to create datetime.");
-		return;
+		return NULL;
 	}
 
-//	if (style)
-//		elm_object_style_set(btn, style);
 
-	evas_object_size_hint_weight_set(datetime, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	elm_object_part_content_set(parent, part_name, datetime);
 
-	/* if (text)
-		elm_object_text_set(btn, text);
-
-	if (image_path)
-		view_set_image(btn, NULL, image_path);
-
-	if (down_cb)
-		evas_object_event_callback_add(btn, EVAS_CALLBACK_MOUSE_DOWN, down_cb, data);
-	if (up_cb)
-		evas_object_event_callback_add(btn, EVAS_CALLBACK_MOUSE_UP, up_cb, data);
-	if (clicked_cb)
-		evas_object_smart_callback_add(btn, "clicked", clicked_cb, data); */
-
+	elm_object_style_set(datetime, "timepicker_layout");
 	evas_object_show(datetime);
+	elm_datetime_format_set(datetime, "%d/%b/%Y%I:%M%p");
 
-	const char * format = elm_datetime_format_get (datetime);
-
-	// TODO: Set up time-only
-	//https://developer.tizen.org/development/api-references/native-application?redirect=/dev-guide/latest/org.tizen.native.wearable.apireference/group__Elm__Datetime.html
+	return datetime;
 }
 
 /*

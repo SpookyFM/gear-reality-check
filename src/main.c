@@ -598,7 +598,7 @@ static Evas_Object *_create_layout_set_time(Evas_Object *parent)
 	/*
 	 * Create datetime.
 	 */
-	view_create_datetime(layout, "timepicker/circle");
+	view_create_datetime(layout);
 
 	return layout;
 }

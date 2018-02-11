@@ -31,7 +31,7 @@ Evas_Object *view_create_win(const char *pkg_name);
 Evas_Object *view_create_conformant_without_indicator(Evas_Object *win);
 Evas_Object *view_create_layout(Evas_Object *parent, const char *file_path, const char *group_name, Eext_Event_Cb cb_function, void *user_data);
 Evas_Object *view_create_layout_by_theme(Evas_Object *parent, const char *classname, const char *group, const char *style);
-Evas_Object *view_create_datetime(Evas_Object *parent, const char *style);
+Evas_Object *view_create_datetime(Evas_Object *parent);
 
 void view_destroy(void);
 void view_alarm_destroy(void);
